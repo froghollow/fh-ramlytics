@@ -1,0 +1,5 @@
+# Create a terraform.tfvars file with:
+# aws_region           = "us-east-1"
+# danelfin_api_key     = "your-api-key-here"
+# s3_bucket_name       = "your-s3-bucket-name"
+# environment          = "production"

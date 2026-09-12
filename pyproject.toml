@@ -1,0 +1,36 @@
+[project]
+name = "ramlytics"
+version = "0.1.0"
+description = "RAMlytics analytics and workflow project."
+readme = "README.md"
+authors = [
+    { name = "Richard", email = "richard@frog-hollow.net" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "dotenv>=0.9.9",
+    "ramlytics-database",
+]
+
+[project.scripts]
+ramlytics = "ramlytics:main"
+
+[tool.uv.workspace]
+members = [
+    "backend/database",
+    "backend/dyndb_load_json",
+    "backend/yfinance",
+]
+
+[tool.uv.sources]
+ramlytics-database = { workspace = true }
+ramlytics-yfinance = { workspace = true }
+
+[build-system]
+requires = ["uv_build>=0.12.6,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.3.0",
+]

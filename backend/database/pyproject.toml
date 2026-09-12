@@ -1,0 +1,21 @@
+[project]
+name = "ramlytics-database"
+version = "0.1.0"
+description = "Local database utilities for RAMlytics."
+requires-python = ">=3.12"
+dependencies = [
+    "boto3>=1.40.8",
+    "pydantic>=2.11.7",
+    "pyarrow>=21.0.0",
+    "python-dotenv>=1.1.1",
+    "ramlytics-yfinance",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.6,<0.13.0"]
+build-backend = "uv_build"

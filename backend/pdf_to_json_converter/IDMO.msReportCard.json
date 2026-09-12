@@ -1,0 +1,192 @@
+{
+    "symbol": "IDMO",
+    "asof_dt": "07/31/26",
+    "fund_highlights": {
+        "morningstar_star_rating": "HHHHH",
+        "fund_category": "Foreign Large Blend",
+        "funds_in_category": 689,
+        "funds_inception": "February 24, 2012",
+        "close": 63.40,
+        "52_week_range": "51.91 - 63.88",
+        "10_day_avg_volume": 284259,
+        "shares_outstanding_millions": 69.1,
+        "market_cap_billion": 4.4,
+        "nav": 63.20,
+        "total_net_assets_billion": 4.1,
+        "gross_expense_ratio": "0.25%",
+        "premium_discount": "0.32%"
+    },
+    "strategy": "The investment seeks to track the investment results (before fees and expenses) of the S&P World Ex-U.S.  Momentum Index.•• The fund will invest at least 90% of its total assets in the securities that comprise the underlying index. Strictly in accordance with its guidelines and mandated procedures, the index provider compiles, maintains and calculates the underlying index, which is composed of constituents of the S&P World Ex-U.S. Index.",
+    "average_annual_return_tax_analysis": {
+        "market_value_return": {      
+            "before_taxes": {
+                "1_year": 23.91,
+                "3_year": 24.69,
+                "5_year": 15.45,
+                "10_year": 12.43,
+                "since_inception": 8.99
+            },
+            "after_taxes_and_distributions": {
+                "1_year": 22.10,
+                "3_year": 23.26,
+                "5_year": 14.13,
+                "10_year": 11.31,
+                "since_inception": 8.01
+            },
+            "after_taxes_distributions_and_sale": {
+                "1_year": 14.17,
+                "3_year": 18.94,
+                "5_year": 11.73,
+                "10_year": 9.71,
+                "since_inception": 6.95
+            },   
+            "tax_cost_ratio": {
+                "1_year": 1.47,
+                "3_year": 1.15,
+                "5_year": 1.15,
+                "10_year": 0.99,
+                "since_inception": null
+            }
+        },
+        "nav_return": {
+            "before_taxes": {
+                "1_year": 23.55,
+                "3_year": 24.69,
+                "5_year": 15.40,
+                "10_year": 12.17,
+                "since_inception": 9.00
+            },
+            "after_taxes_and_distributions": {
+                "1_year": 21.74,
+                "3_year": 23.26,
+                "5_year": 14.07,
+                "10_year": 11.06,
+                "since_inception": 8.02
+            },
+            "after_taxes_distributions_and_sale": {
+                "1_year": 13.96,
+                "3_year": 18.94,
+                "5_year": 11.69,
+                "10_year": 9.48,
+                "since_inception": 6.96
+            },
+            "tax_cost_ratio": {
+                "1_year": 1.47,
+                "3_year": 1.15,
+                "5_year": 1.15,
+                "10_year": 0.99,
+                "since_inception": 0.91
+            }
+        }
+    },
+    "portfolio_facts": {
+        "total_net_assets_billion": 4.1,
+        "stock_holdings": 191,
+        "bond_holdings": 0,
+        "portfolio_turnover_percent": 105,
+        "percent_assets_top_10": 29.13
+    },
+    "asset_allocation": {
+        "cash": {"short": 0.0, "long": 0.1, "net": 0.1},
+        "stocks": {"short": 0.0, "long": 99.9, "net": 99.9},
+        "bonds": {"short": 0.0, "long": 0.0, "net": 0.0},
+        "other": {"short": 0.0, "long": 0.0, "net": 0.0}
+    },
+    "market_capitalization": {
+        "giant": 55.3,
+        "large": 37.7,
+        "medium": 7.0,
+        "small": 0.1,
+        "micro": 0.0
+    },
+    "regional_exposure": {
+        "greater_europe": 52.5,
+        "greater_asia": 26.9,
+        "north_america": 16.4,
+        "africa_middle_east": 4.1,
+        "latin_america": 0.2
+    },
+    "country_exposure": {
+        "japan": 20.0,
+        "canada": 16.0,
+        "united_kingdom": 16.0,
+        "spain": 11.5,
+        "germany": 7.1,
+        "italy": 6.0,
+        "israel": 4.1,
+        "france": 3.6,
+        "hong_kong": 2.9,
+        "singapore": 2.8,
+        "other": 10.2
+    },
+    "morningstar_ratings": {
+        "overall": {
+        "rating": "HHHHH",
+        "return": 5.00,
+        "risk": 3.00,
+        "funds_in_category": 689
+        },
+        "3_year": {
+        "rating": "HHHHH",
+        "return": "High",
+        "risk": "Above Average",
+        "funds_in_category": 645
+        },
+        "5_year": {
+        "rating": "HHHHH",
+        "return": "High",
+        "risk": "Average",
+        "funds_in_category": 607
+        },
+        "10_year": {
+        "rating": "HHHHH",
+        "return": "High",
+        "risk": "Below Average",
+        "funds_in_category": 481
+        }
+    },
+    "risk_analysis": {
+        "standard_deviation": {
+        "category": 13.08,
+        "self": 12.98
+        },
+        "sharpe_ratio": {
+        "category": 1.41,
+        "self": 0.86
+        },
+        "mean": {
+        "category": 24.69,
+        "self": 15.95
+        }
+    },
+    "top_10_holdings": [
+        {"name": "HSBC Holdings PLC", "weight_percent": 5.0},
+        {"name": "Banco Santander SA", "weight_percent": 4.3},
+        {"name": "The Toronto-Dominion Bank", "weight_percent": 4.1},
+        {"name": "Banco Bilbao Vizcaya Argentaria SA", "weight_percent": 3.0},
+        {"name": "Rolls-Royce Holdings PLC", "weight_percent": 2.7},
+        {"name": "Advantest Corp", "weight_percent": 2.3},
+        {"name": "Iberdrola SA", "weight_percent": 2.1},
+        {"name": "Siemens Energy AG", "weight_percent": 2.0},
+        {"name": "UniCredit SpA", "weight_percent": 1.9},
+        {"name": "Bank of Nova Scotia", "weight_percent": 1.7}
+    ],
+    "sector_industry_allocation": {
+        "cyclical": 58.94,
+        "basic_materials": 8.93,
+        "consumer_cyclical": 1.24,
+        "financial_services": 47.02,
+        "real_estate": 1.75,
+        "defensive": 11.69,
+        "consumer_defensive": 2.52,
+        "healthcare": 1.30,
+        "utilities": 7.87,
+        "sensitive": 29.23,
+        "communication_services": 2.01,
+        "energy": 1.62,
+        "industrials": 20.17,
+        "technology": 5.43
+    }
+}
+
+ 
