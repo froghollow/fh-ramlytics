@@ -1,0 +1,5 @@
+# Create a terraform.tfvars file with:
+# aws_region          = "us-east-1"
+# s3_bucket_name      = "your-s3-bucket-name"
+# dynamodb_table_name = "alex-financial-data"
+# environment         = "production"
