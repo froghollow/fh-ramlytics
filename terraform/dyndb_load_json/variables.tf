@@ -46,10 +46,10 @@ variable "s3_bucket_name" {
   default     = "fh-danelfin-289755104220"
 }
 
-variable "s3_key_prefix" {
+variable "s3_inbound_folder" {
   description = "S3 key prefix to watch for incoming market data files"
   type        = string
-  default     = "ingest/market_data/"
+  default     = "inbound"
 }
 
 variable "dynamodb_table_name" {

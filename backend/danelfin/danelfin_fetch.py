@@ -9,14 +9,14 @@ def save_and_upload_json(fname, json_data):
     from time import sleep
     s3_client = boto3.client("s3", region_name="us-east-1")
     s3_bucket_name = os.getenv("S3_BUCKET_NAME", "fh-danelfin-289755104220")
-    s3_key_prefix  = os.getenv("S3_KEY_PREFIX", "ingest/market_data")
+    s3_inbound_folder  = os.getenv("S3_INBOUND_FOLDER", "inbound/market_data")
     ingest_path = os.getenv("INGEST_PATH", "/tmp")
 
     with open(f"{ingest_path}/{fname}", "w") as f:
         json.dump(json_data, f, indent=4)
-    s3_client.upload_file(f"{ingest_path}/{fname}", s3_bucket_name, f"{s3_key_prefix}/{fname}")
+    s3_client.upload_file(f"{ingest_path}/{fname}", s3_bucket_name, f"{s3_inbound_folder}/{fname}")
 
-    print(f"Saved and uploaded {fname} to S3 bucket {s3_bucket_name}")
+    print(f"Saved and uploaded {fname} to s3://{s3_bucket_name}/{s3_inbound_folder}/{fname}")
     sleep(10)  # Sleep for 10 seconds to avoid hitting rate limits
 
 def lambda_handler(event, context=None):

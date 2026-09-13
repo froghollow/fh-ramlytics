@@ -12,7 +12,7 @@ import pandas as pd
 
 s3_client = boto3.client("s3", region_name="us-east-1")
 s3_bucket_name = os.getenv("S3_BUCKET_NAME", "fh-danelfin-289755104220")
-s3_key_prefix = os.getenv("S3_KEY_PREFIX", "ingest/accounts")
+s3_inbound_folder = os.getenv("S3_INBOUND_FOLDER", "ingest/accounts")
 
 clerk_user_id = os.getenv("CLERK_USER_ID", "user_3DM8poEbvBf5VXyVG4AGF9bdnoe") # Richard & Sue
 
@@ -58,16 +58,16 @@ def export_and_upload_json(df_header, df_table, outpath=None):
         "holdings": json_holdings
     }
 
-    #fname = f"{s3_key_prefix}{today_str}/etrade.{account_id.replace(" ","_")}.json"
+    #fname = f"{s3_inbound_folder}{today_str}/etrade.{account_id.replace(" ","_")}.json"
     fname = f"etrade.{account_id.replace(' ','-')}.json"
     # create directory if it doesn't exist
     os.makedirs(json_path, exist_ok=True)
 
     with open(f"{json_path}/{fname}", "w") as f:
         json.dump(json_account, f, indent=4)
-    s3_client.upload_file(f"{json_path}/{fname}", s3_bucket_name, f"{s3_key_prefix}/{fname}")
+    s3_client.upload_file(f"{json_path}/{fname}", s3_bucket_name, f"{s3_inbound_folder}/{fname}")
 
-    print(f"Saved and uploaded {json_path}/{fname} to s3://{s3_bucket_name}/{s3_key_prefix}/{fname}")  
+    print(f"Saved and uploaded {json_path}/{fname} to s3://{s3_bucket_name}/{s3_inbound_folder}/{fname}")  
 
     return json_account
 

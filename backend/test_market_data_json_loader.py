@@ -7,16 +7,16 @@ outpath = os.getenv("OUTPATH", "/tmp/accounts")
 
 import boto3
 s3_bucket = os.getenv("S3_BUCKET", "fh-danelfin-289755104220")
-s3_key_prefix = "ingest/market_data/"
+s3_inbound_folder = "inbound/"
 s3_client = boto3.client("s3")
 
 # for each .json in the s3 bucket under the key prefix
-response = s3_client.list_objects_v2(Bucket=s3_bucket, Prefix=s3_key_prefix)
+response = s3_client.list_objects_v2(Bucket=s3_bucket, Prefix=s3_inbound_folder)
 for obj in response.get("Contents", []):
     key = obj["Key"]
 
     # process only files in root folder
-    if "/" in key[len(s3_key_prefix):]:
+    if "/" in key[len(s3_inbound_folder):]:
         continue
 
     if key.endswith(".json") :

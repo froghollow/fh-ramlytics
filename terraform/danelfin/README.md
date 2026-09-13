@@ -70,7 +70,7 @@ Confirm by typing `yes` when prompted.
 The Lambda function uses these environment variables (set automatically):
 - `DANELFIN_API_KEY`: Your Danelfin API key
 - `S3_BUCKET_NAME`: S3 bucket for storing data
-- `S3_KEY_PREFIX`: Prefix for S3 keys (default: `json/`)
+- `S3_INBOUND_FOLDER`: Prefix for S3 keys (default: `json/`)
 
 ### Schedule
 

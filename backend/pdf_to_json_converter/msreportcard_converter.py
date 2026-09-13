@@ -130,9 +130,9 @@ async def convert_file(pdf_path: Path, json_path: Path) -> None:
     print(f"Wrote {json_path}")
     # upload .json to S3 to be processed by ObjectCreated-initiated Lambda
     s3_bucket = os.getenv("S3_BUCKET", "fh-danelfin-289755104220")
-    s3_key_prefix = "ingest/market_data/"
+    s3_inbound_folder = "inbound/"
     s3_client = boto3.client("s3")
-    s3_key = f"{s3_key_prefix}{json_path.name}"
+    s3_key = f"{s3_inbound_folder}{json_path.name}"
     s3_client.upload_file(str(json_path), s3_bucket, s3_key)
 
     # move .pdf to subfolder with the current date
@@ -173,7 +173,7 @@ def main() -> None:
     parser.add_argument(
         "output_folder",
         nargs="?",
-        default=f"../ingest/market_data/{datetime.now().strftime('%Y-%m-%d')}",
+        default=f"../inbound/{datetime.now().strftime('%Y-%m-%d')}",
         help="Output folder for *.msReportCard.json files",
     )
     parser.add_argument(

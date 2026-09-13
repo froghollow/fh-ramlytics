@@ -14,7 +14,7 @@ from decimal import Decimal
 
 s3_client = boto3.client("s3", region_name="us-east-1")
 s3_bucket_name = os.getenv("S3_BUCKET_NAME", "fh-danelfin-289755104220")
-s3_key_prefix = os.getenv("S3_KEY_PREFIX", "ingest/accounts")
+s3_inbound_folder = os.getenv("S3_INBOUND_FOLDER", "ingest/accounts")
 clerk_user_id = os.getenv("CLERK_USER_ID", "user_3DM8poEbvBf5VXyVG4AGF9bdnoe") # Richard & Sue
 context=None # local context for testing outside of Lambda
 
@@ -86,7 +86,7 @@ def lambda_handler(event, context):
         # move the processed file to a "./yyyy-mm-dd" folder in the s3 bucket
         from datetime import datetime
         date_prefix = datetime.now().strftime("%Y-%m-%d")
-        new_key = f"{s3_key_prefix}/{date_prefix}/{s3_object_key.split('/')[-1]}"
+        new_key = f"{s3_inbound_folder}/{date_prefix}/{s3_object_key.split('/')[-1]}"
         print(f"Moving processed {s3_object_key} to {new_key}")
         s3_client.copy_object(Bucket=s3_bucket_name, CopySource={"Bucket": s3_bucket_name, "Key": s3_object_key}, Key=new_key)
         s3_client.delete_object(Bucket=s3_bucket_name, Key=s3_object_key)  # delete the original file after moving

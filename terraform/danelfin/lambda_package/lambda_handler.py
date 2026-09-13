@@ -42,7 +42,7 @@ def handler(event, context):
     # Load configuration from environment
     danelfin_api_key = os.getenv("DANELFIN_API_KEY")
     s3_bucket_name = os.getenv("S3_BUCKET_NAME", "fh-danelfin-289755104220")
-    s3_key_prefix = os.getenv("S3_KEY_PREFIX", "json/")
+    s3_inbound_folder = os.getenv("S3_INBOUND_FOLDER", "json/")
     
     if not danelfin_api_key:
         raise ValueError("DANELFIN_API_KEY environment variable is required")
@@ -56,7 +56,7 @@ def handler(event, context):
     try:
         # Ingest individual symbols
         for symbol in symbols:
-            fname = f"{s3_key_prefix}{today_str}.{symbol}.json"
+            fname = f"{s3_inbound_folder}{today_str}.{symbol}.json"
             print(f"Fetching scores for {symbol}...")
             
             try:
@@ -79,7 +79,7 @@ def handler(event, context):
                 continue
         
         # Ingest TOP_100
-        fname = f"{s3_key_prefix}{today_str}.TOP_100.json"
+        fname = f"{s3_inbound_folder}{today_str}.TOP_100.json"
         print(f"Fetching TOP_100 rankings...")
         
         top_100 = client.ranking(date=today_str)

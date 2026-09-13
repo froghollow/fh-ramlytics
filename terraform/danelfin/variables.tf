@@ -34,10 +34,10 @@ variable "s3_bucket_name" {
   default     = "fh-danelfin-289755104220"
 }
 
-variable "s3_key_prefix" {
+variable "s3_inbound_folder" {
   description = "S3 key prefix for stored data"
   type        = string
-  default     = "json/"
+  default     = "inbound/market_data"
 }
 
 variable "danelfin_api_key" {

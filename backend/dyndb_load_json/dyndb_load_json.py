@@ -2,45 +2,74 @@
 import json
 import boto3
 from datetime import datetime
+from urllib.parse import unquote_plus
+import os
 
 from ramlytics_database import DynamoDBClient
 db = DynamoDBClient()
 
+from datetime import datetime
+today = datetime.now().strftime("%Y-%m-%d")
+
 s3 = boto3.client("s3")
-bucket_name = "fh-danelfin-289755104220"
-prefix = "ingest/market_data/"
+prefix = "inbound/"
+
+''' from ObjectCreated event ...
+s3_bucket_name = os.getenv("S3_BUCKET_NAME", "fh-danelfin-289755104220")
+'''
+s3_ingest_folder  = os.getenv("S3_INGEST_FOLDER", f"ingest/market_data/{today}")
+
+def move_processed_file(s3_bucket_name, s3_key, s3_ingest_folder):
+    new_key = f"{s3_ingest_folder}/{s3_key.split('/')[-1]}"
+    
+    s3.copy_object(Bucket=s3_bucket_name, CopySource={"Bucket": s3_bucket_name, "Key": s3_key}, Key=new_key)
+    s3.delete_object(Bucket=s3_bucket_name, Key=s3_key)
+
+    print(f"Moving file to {new_key}")
+
+    return new_key
+
 
 def lambda_handler(event, context):
     from datetime import datetime
 
-    key = event['Records'][0]['s3']['object']['key']
-    bucket_name = event['Records'][0]['s3']['bucket']['name']
+    s3_bucket_name = event['Records'][0]['s3']['bucket']['name']
+    s3_key = unquote_plus(event['Records'][0]['s3']['object']['key'])
+    s3_ingest_folder = f"ingest/{s3_key.split('/')[-2]}/{today}"
 
-    print(key)
-    if key.endswith('.msReportCard.json'):
-        print(f"Morgan Stanley report card: {key}")
-    elif key.endswith('.ai_scores.json'):
-        print(f"Danelfin AI scores: {key}")
-    elif key.endswith('.trading_params.json'):
-        print(f"Danelfin Trading Params: {key}")
-    #elif key.endswith('.price_forecast.json'):
-    #    print(f"Danelfin Price Forecast: {key}")
+    print(s3_key)
+    if s3_key.endswith('.msReportCard.json'):
+        print(f"Morgan Stanley report card: {s3_key}")
+    elif s3_key.endswith('.ai_scores.json'):
+        print(f"Danelfin AI scores: {s3_key}")
+    elif s3_key.endswith('.trading_params.json'):
+        print(f"Danelfin Trading Params: {s3_key}")
+    elif s3_key.endswith('.price_forecast.json'):
+        print(f"Danelfin Price Forecast: {s3_key}")
+    elif s3_key.endswith('.dfin_top100.json'):
+        print(f"Danelfin Top 100: {s3_key} -- Pending Implementation'")
+        move_processed_file(s3_bucket_name, s3_key, s3_ingest_folder)
+        return
+    elif s3_key.endswith('.dfin_trade_ideas.json'):
+        print(f"Danelfin Trade Ideas: {s3_key} -- Pending Implementation")
+        move_processed_file(s3_bucket_name, s3_key, s3_ingest_folder)
+        return
     else:
-        print(f"Skipping Unknown file type: {key}")
+        print(f"Skipping unknown file type: {s3_key}")
         return
 
     # read the file from S3
-    response = s3.get_object(Bucket=bucket_name, Key=key)
+    response = s3.get_object(Bucket=s3_bucket_name, Key=s3_key)
     content = response['Body'].read().decode('utf-8')
     timestamp = datetime.now().isoformat(sep=' ')
     
     try:
         parsed_content = json.loads(content)
-        print(f"Parsed JSON content of {key}:")
+        print(f"Parsed JSON content of {s3_key}:")
         print(parsed_content)
         parsed_content["updated_at"] = timestamp
     except json.JSONDecodeError:
-        print(f"Failed to parse JSON content of {key}")
+        print(f"Failed to parse JSON content of {s3_key}")
 
     symbol = parsed_content.get("symbol")
     instrument = db.get_instrument(symbol)
@@ -58,10 +87,7 @@ def lambda_handler(event, context):
     # move the processed file to a "./yyyy-mm-dd" folder in the s3 bucket
     from datetime import datetime
     date_prefix = datetime.now().strftime("%Y-%m-%d")
-    new_key = f"{prefix}{date_prefix}/{key.split('/')[-1]}"
-    print(f"Moving processed file to {new_key}")
-    s3.copy_object(Bucket=bucket_name, CopySource={"Bucket": bucket_name, "Key": key}, Key=new_key)
-    s3.delete_object(Bucket=bucket_name, Key=key)
+    move_processed_file(s3_bucket_name, s3_key, s3_ingest_folder)
 
     return {
         "statusCode": 200,

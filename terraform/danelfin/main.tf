@@ -26,6 +26,6 @@ locals {
   environment_vars = {
     DANELFIN_API_KEY = var.danelfin_api_key
     S3_BUCKET_NAME   = var.s3_bucket_name
-    S3_KEY_PREFIX    = var.s3_key_prefix
+    S3_INBOUND_FOLDER    = var.s3_inbound_folder
   }
 }

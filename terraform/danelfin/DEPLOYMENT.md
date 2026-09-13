@@ -27,7 +27,7 @@ environment     = "production"
 
 # S3 configuration
 s3_bucket_name = "your-bucket-name"
-s3_key_prefix  = "json/"
+s3_inbound_folder  = "json/"
 
 # Lambda configuration (optional)
 lambda_timeout = 300
