@@ -37,10 +37,17 @@ def yf_search(query: str):
     
     for quote in lookup.response.get("quotes", []):
         if quote['symbol'] == query or quote['shortname'] == query or quote['longname'] == query:
-            return quote
+            found = quote            
         else:
             print(f"No exact symbol or name match for '{query}'.  Returning first quote instead.")
-            return lookup.response.get("quotes", [])[0]
+            found = lookup.response.get("quotes", [])[0]
+
+        if found:
+            current_price = round(yf.Ticker(found['symbol']).fast_info.get('lastPrice'), 4)
+            if current_price:
+                found['current_price'] = current_price
+
+    return found
 
 class Tickers():
 

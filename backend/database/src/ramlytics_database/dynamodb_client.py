@@ -334,6 +334,8 @@ class DynamoDBClient:
             item["sector"] = quote.get("sector")
         if quote.get("industry") and not item.get("industry"):
             item["industry"] = quote.get("industry")
+        if quote.get("current_price"):
+            item["current_price"] = quote.get("current_price")
 
         return self.put(item)
 

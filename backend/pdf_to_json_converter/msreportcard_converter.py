@@ -25,7 +25,8 @@ from pypdf import PdfReader
 load_dotenv(override=True)
 import boto3
 
-from yf_tickers import yf_search
+from ramlytics_yfinance import yf_search
+
 def enhance_top10(top10_list):
     enhanced_top10 = []
 

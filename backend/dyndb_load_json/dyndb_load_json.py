@@ -1,7 +1,6 @@
 # Market Data JSON Loader -- ToDo implement as Lambda function
 import json
 import boto3
-from datetime import datetime
 from urllib.parse import unquote_plus
 import os
 
@@ -12,11 +11,7 @@ from datetime import datetime
 today = datetime.now().strftime("%Y-%m-%d")
 
 s3 = boto3.client("s3")
-prefix = "inbound/"
 
-''' from ObjectCreated event ...
-s3_bucket_name = os.getenv("S3_BUCKET_NAME", "fh-danelfin-289755104220")
-'''
 s3_ingest_folder  = os.getenv("S3_INGEST_FOLDER", f"ingest/market_data/{today}")
 
 def move_processed_file(s3_bucket_name, s3_key, s3_ingest_folder):
@@ -28,7 +23,6 @@ def move_processed_file(s3_bucket_name, s3_key, s3_ingest_folder):
     print(f"Moving file to {new_key}")
 
     return new_key
-
 
 def lambda_handler(event, context):
     from datetime import datetime
@@ -46,12 +40,12 @@ def lambda_handler(event, context):
         print(f"Danelfin Trading Params: {s3_key}")
     elif s3_key.endswith('.price_forecast.json'):
         print(f"Danelfin Price Forecast: {s3_key}")
-    elif s3_key.endswith('.dfin_top100.json'):
-        print(f"Danelfin Top 100: {s3_key} -- Pending Implementation'")
+    elif s3_key.endswith('dfin_top100.json'):
+        print(f"Danelfin Top 100: {s3_key} -- (unused for now)")
         move_processed_file(s3_bucket_name, s3_key, s3_ingest_folder)
         return
-    elif s3_key.endswith('.dfin_trade_ideas.json'):
-        print(f"Danelfin Trade Ideas: {s3_key} -- Pending Implementation")
+    elif s3_key.endswith('dfin_trade_ideas.json'):
+        print(f"Danelfin Trade Ideas: {s3_key} -- (unused for now)")
         move_processed_file(s3_bucket_name, s3_key, s3_ingest_folder)
         return
     else:
@@ -85,8 +79,6 @@ def lambda_handler(event, context):
     db.put_instrument(symbol, **instrument)
 
     # move the processed file to a "./yyyy-mm-dd" folder in the s3 bucket
-    from datetime import datetime
-    date_prefix = datetime.now().strftime("%Y-%m-%d")
     move_processed_file(s3_bucket_name, s3_key, s3_ingest_folder)
 
     return {
