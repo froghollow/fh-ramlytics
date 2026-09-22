@@ -221,6 +221,7 @@ __marimo__/
 terraform.tfstate.d/
 *.tfstate
 *.tfstate.backup
+.terraform/danelfin/hashicorp/aws/
 
 # Lambda deployment packages
 lambda_function.zip

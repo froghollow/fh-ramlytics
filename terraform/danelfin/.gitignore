@@ -30,3 +30,4 @@ __pycache__/
 *.egg-info/
 dist/
 build/
+hashicorp/aws/
