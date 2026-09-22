@@ -106,7 +106,7 @@ class DynamoDBClient:
             kwargs["ConditionExpression"] = condition_expression
         return self.table.update_item(**kwargs)
 
-    def update_attributes(
+    def update_attributes(  # unused, consider removing or refactoring (ToDo: Sep 20)
         self,
         partition_key: str,
         sort_key: str,
@@ -175,13 +175,13 @@ class DynamoDBClient:
             if not start_key:
                 return items
 
-    def batch_put(self, items: Iterable[dict[str, Any]]) -> None:
+    def batch_put(self, items: Iterable[dict[str, Any]]) -> None:   # unused, consider removing or refactoring (ToDo: Sep 20)
         """Write items in batches using boto3 retry handling."""
         with self.table.batch_writer() as batch:  # type BatchWriter
             for item in items:
                 batch.put_item(Item=self._clean_item(item))
 
-    def batch_delete(self, keys: Iterable[dict[str, str]]) -> None:
+    def batch_delete(self, keys: Iterable[dict[str, str]]) -> None:   # unused, consider removing or refactoring (ToDo: Sep 20)
         """Delete primary-key pairs in batches."""
         with self.table.batch_writer() as batch:  # type BatchWriter
             for key in keys:

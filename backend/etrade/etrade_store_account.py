@@ -1,5 +1,6 @@
 """
 etrade_store_account.py  
+deprecated -- functionality moved to dyndb_load_json.py (Sep 20 mods)
 Lambda triggered by S3 ObjectCreate event stores json account data into DynamoDB, including account and position data.
 If the instrument is not already in the DB, it is added.
 """

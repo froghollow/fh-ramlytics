@@ -34,18 +34,35 @@ def yf_search(query: str):
     import yfinance as yf
 
     lookup = yf.Search(query)
-    
-    for quote in lookup.response.get("quotes", []):
-        if quote['symbol'] == query or quote['shortname'] == query or quote['longname'] == query:
-            found = quote            
-        else:
-            print(f"No exact symbol or name match for '{query}'.  Returning first quote instead.")
-            found = lookup.response.get("quotes", [])[0]
 
-        if found:
-            current_price = round(yf.Ticker(found['symbol']).fast_info.get('lastPrice'), 4)
-            if current_price:
-                found['current_price'] = current_price
+    response = lookup.response.get("quotes", [])
+    if response == []:
+        return None
+    
+    found = None
+    for quote in response:
+        if 'exchange' not in quote:
+            continue
+        if quote['symbol'] == query or quote['shortname'] == query:
+            found = quote
+            break
+        if 'longname' in quote.keys() and quote['longname'] == query:
+            found = quote
+            break
+        else:
+            #print(f"No exact symbol or name match for '{query}'.  Returning first quote instead.")
+            found = response[0]
+            break
+
+    if found: 
+        current_price = round(yf.Ticker(found['symbol']).fast_info.get('lastPrice'), 4)
+        if current_price:
+            found['current_price'] = current_price
+    else:
+        found = {
+            'shortname': query,
+            'longname': "Not Found by yf_search"
+        }
 
     return found
 

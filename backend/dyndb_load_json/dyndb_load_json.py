@@ -65,18 +65,38 @@ def lambda_handler(event, context):
     except json.JSONDecodeError:
         print(f"Failed to parse JSON content of {s3_key}")
 
-    symbol = parsed_content.get("symbol")
-    instrument = db.get_instrument(symbol)
-    if not instrument:
-        print(f"Instrument {symbol} not found in DB. Adding it.")
-        db.put_instrument(
-            symbol=symbol
-        )
+    if "market_data" in s3_ingest_folder:  # ToDo: deploy/test Sep 20 mods)
+        symbol = parsed_content.get("symbol")
         instrument = db.get_instrument(symbol)
-    
-    instrument.update(parsed_content)
-    instrument.pop("symbol")
-    db.put_instrument(symbol, **instrument)
+        if not instrument:
+            print(f"Instrument {symbol} not found in DB. Adding it.")
+            db.put_instrument(
+                symbol=symbol
+            )
+            instrument = db.get_instrument(symbol)
+        
+        instrument.update(parsed_content)
+        instrument.pop("symbol")
+        db.put_instrument(symbol, **instrument)
+        
+    elif "accounts" in s3_ingest_folder:  # ToDo: deploy/test Sep 20 mods)
+        clerk_user_id = parsed_content.get("clerk_user_id")
+        account_id = parsed_content.get("account_id")
+        account = db.get_account(clerk_user_id, account_id)
+        if not account:
+            print(f"Account {account_id} for user {clerk_user_id} not found in DB. Adding it.")
+            db.put_account(
+                clerk_user_id=clerk_user_id,
+                account_id=account_id,
+                id=account_id,  # ??? 
+            )
+            account = db.get_account(clerk_user_id, account_id)
+        
+        account.update(parsed_content)
+        account.pop("clerk_user_id")
+        account.pop("account_id")
+        db.put_account(clerk_user_id, account_id, **account)
+
 
     # move the processed file to a "./yyyy-mm-dd" folder in the s3 bucket
     move_processed_file(s3_bucket_name, s3_key, s3_ingest_folder)
