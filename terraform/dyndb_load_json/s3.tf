@@ -30,11 +30,19 @@ resource "aws_s3_bucket_notification" "data_ingest" {
     filter_suffix       = "dfin_top100.json"
   }
 
-    lambda_function {
+  lambda_function {
     lambda_function_arn = aws_lambda_function.dyndb_load_json.arn
     events              = ["s3:ObjectCreated:*"]
     filter_prefix       = var.s3_inbound_folder
     filter_suffix       = "dfin_trade_ideas.json"
   }
+
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.dyndb_load_json.arn
+    events              = ["s3:ObjectCreated:*"]
+    filter_prefix       = var.s3_inbound_folder
+    filter_suffix       = ".etrade.json"
+  }
+  
   depends_on = [aws_lambda_permission.allow_s3]
 }
