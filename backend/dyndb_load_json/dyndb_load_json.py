@@ -40,6 +40,8 @@ def lambda_handler(event, context):
         print(f"Danelfin Trading Params: {s3_key}")
     elif s3_key.endswith('.price_forecast.json'):
         print(f"Danelfin Price Forecast: {s3_key}")
+    elif s3_key.endswith('.etrade.json'):
+        print(f"ETrade Account Data: {s3_key}")        
     elif s3_key.endswith('dfin_top100.json'):
         print(f"Danelfin Top 100: {s3_key} -- (unused for now)")
         move_processed_file(s3_bucket_name, s3_key, s3_ingest_folder)
@@ -79,7 +81,7 @@ def lambda_handler(event, context):
         instrument.pop("symbol")
         db.put_instrument(symbol, **instrument)
         
-    elif "accounts" in s3_ingest_folder:  # ToDo: deploy/test Sep 20 mods)
+    elif "account_data" in s3_ingest_folder:  # ToDo: deploy/test Sep 20 mods)
         clerk_user_id = parsed_content.get("clerk_user_id")
         account_id = parsed_content.get("account_id")
         account = db.get_account(clerk_user_id, account_id)

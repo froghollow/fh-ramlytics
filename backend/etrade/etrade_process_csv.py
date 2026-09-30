@@ -12,7 +12,7 @@ import pandas as pd
 
 s3_client = boto3.client("s3", region_name="us-east-1")
 s3_bucket_name = os.getenv("S3_BUCKET_NAME", "fh-danelfin-289755104220")
-s3_inbound_folder = os.getenv("S3_INBOUND_FOLDER", "ingest/accounts")
+s3_folder = os.getenv("S3_FOLDER", "inbound/account_data")
 
 clerk_user_id = os.getenv("CLERK_USER_ID", "user_3DM8poEbvBf5VXyVG4AGF9bdnoe") # Richard & Sue
 
@@ -35,7 +35,7 @@ def get_df( csv_substring ):
 
 def export_and_upload_json(df_header, df_table, outpath=None):
     if not outpath:
-        outpath = os.getenv("OUTPATH", "/tmp/accounts")
+        outpath = os.getenv("LOCAL_FOLDER", "/tmp/accounts")
     json_path = outpath
 
     json_header = json.loads(df_header.set_index('Account').to_json(orient='index'))
@@ -58,16 +58,15 @@ def export_and_upload_json(df_header, df_table, outpath=None):
         "holdings": json_holdings
     }
 
-    #fname = f"{s3_inbound_folder}{today_str}/etrade.{account_id.replace(" ","_")}.json"
-    fname = f"etrade.{account_id.replace(' ','-')}.json"
+    fname = f"{account_id.replace(' ','-')}.etrade.json"
     # create directory if it doesn't exist
     os.makedirs(json_path, exist_ok=True)
 
     with open(f"{json_path}/{fname}", "w") as f:
         json.dump(json_account, f, indent=4)
-    s3_client.upload_file(f"{json_path}/{fname}", s3_bucket_name, f"{s3_inbound_folder}/{fname}")
+    s3_client.upload_file(f"{json_path}/{fname}", s3_bucket_name, f"{s3_folder}/{fname}")
 
-    print(f"Saved and uploaded {json_path}/{fname} to s3://{s3_bucket_name}/{s3_inbound_folder}/{fname}")  
+    print(f"Saved and uploaded {json_path}/{fname} to s3://{s3_bucket_name}/{s3_folder}/{fname}")  
 
     return json_account
 
@@ -79,7 +78,7 @@ def process_etrade_csv_downloads(inpath, outpath=None, yymmdd=None):
         yymmdd = datetime.datetime.now().strftime("%y%m%d")
 
     if not outpath:
-        outpath = os.getenv("OUTPATH", "/tmp/accounts")
+        outpath = os.getenv("LOCAL_FOLDER", "/tmp/accounts")
 
     for csv_filename in os.listdir (inpath):
 
@@ -98,7 +97,7 @@ def process_etrade_csv_downloads(inpath, outpath=None, yymmdd=None):
 
         if "Stocks+Options" in data:
             sec_type = "Stocks+EFTs"
-            table = data[data.find('Symbol,Last'):data.find('CASH,,,')]
+            table = data[data.find('Symbol,Price'):data.find('CASH,,,')]
             df_table = get_df(table)
             df_table['Account'] = df_header['Account'][0]
             #concat( df_concat_stocks, df_table)
@@ -110,7 +109,7 @@ def process_etrade_csv_downloads(inpath, outpath=None, yymmdd=None):
             # write json file for each account
             json_account = export_and_upload_json(df_header, df_table, outpath)
             
-        elif "Bonds,CUSIP" in data:
+        elif "View Summary - Bonds" in data:
             sec_type = "Bonds"
             table = data[data.find('Symbol,Bond'):data.find('CASH,,,')]
             df_table = get_df(table)
@@ -125,16 +124,5 @@ def process_etrade_csv_downloads(inpath, outpath=None, yymmdd=None):
 
     df_concat_stocks.to_csv( f"{inpath}/etrade_Stocks+EFTs_{yymmdd}.csv" )
     df_concat_bonds.to_csv(  f"{inpath}/etrade_Bonds_{yymmdd}.csv" )
-
-
-    # ToDo -- instead, get the set of unique stock symbols from dynDb
-    # update pfo_holdings in config/symbols.json with the latest symbols from df_concat_stocks
-    symbols = list(df_concat_stocks['Symbol'].unique())
-    symbols.sort()
-
-    symbols_config = {}
-    symbols_config["pfo_holdings"] = symbols
-    with open(f"{inpath}/symbols.json", "w") as f:
-        json.dump(symbols_config, f, indent=4)  
 
     return df_concat_stocks, df_concat_bonds
