@@ -334,8 +334,12 @@ class DynamoDBClient:
             item["sector"] = quote.get("sector")
         if quote.get("industry") and not item.get("industry"):
             item["industry"] = quote.get("industry")
-        if quote.get("current_price"):
-            item["current_price"] = quote.get("current_price")
+
+        if quote.get("fastinfo"):
+            fastinfo = quote.get("fastinfo")
+            item['fastinfo'] = fastinfo
+            if fastinfo.get("lastPrice"):
+                item["current_price"] = round(fastinfo.get("lastPrice"), 4)
 
         return self.put(item)
 
@@ -410,6 +414,69 @@ class DynamoDBClient:
                 f"USER#{clerk_user_id}#STATUS#{status}", index_name="GSI3", scan_forward=False
             )
         return self.query_all(f"USER#{clerk_user_id}", "JOB#", scan_forward=False)
+
+    def enhance_top10_holdings(self, symbols=[], lookups={}):
+        # top_10_holdings are created from the PDF/JSON import of instrument data
+        # Enhancement is now deprecated, use db_query.get_instrument_holdings_df instead
+        return ("# deprecated: computed on retrieval db_query.get_instrument_holdings_df")
+        if not symbols:
+            symbols = []
+            for instrument in self.list_instruments():
+                symbols.append(instrument.get("symbol"))
+
+            symbols = set(symbols)
+
+        for symbol in symbols:
+            #top_10_holdings = 
+            instrument = self.get_instrument(symbol)
+
+            top_10_holdings = instrument.get("top_10_holdings", None)
+            if not top_10_holdings:
+                top_10_holdings = [
+                    {
+                        "symbol" : symbol,
+                        "weight_percent" : 100
+                    }
+                ]
+            pct_in_top10 = 0
+            for holding in top_10_holdings:
+                pct_in_top10 += holding.get("weight_percent", 0)
+
+                holding_name = holding.get("name")
+                # Check if the holding is in the lookups dictionary
+                if holding_name in lookups:
+                    holding_symbol = lookups[holding_name].get("symbol")
+                    search_key = holding_symbol
+                else:
+                    search_key = holding_name
+
+                search_result = yf_search(search_key)
+                if not search_result:
+                    search_result = yf_search(symbol)
+
+                # merge subholding data into the holding
+                if search_result:
+                    holding.update(search_result)
+
+            # if pct_in_top10 <> 100, it means there are holdings outside the top 10
+            print(f"Symbol: {symbol}, Pct in Top 10: {pct_in_top10}")
+
+            # replace list item 'holdings outside the top 10' if it already exists
+            top_10_holdings = [h for h in top_10_holdings if h.get("name") != "holdings outside the top 10"]
+            outside_top_10_weight = 100 - pct_in_top10
+            if outside_top_10_weight > 0:
+                top_10_holdings.append({
+                    "symbol": symbol,
+                    "name": "holdings outside the top 10",
+                    "weight_percent": outside_top_10_weight,
+                    "current_price": instrument.get("current_price", None),
+                    "quoteType": "EFT",
+                    "industry": '--',
+                    "sector": '--',
+                })
+
+            #instrument["top_10_holdings"] = top_10_holdings
+            self.put_instrument(symbol, **{"top_10_holdings": top_10_holdings}) 
 
 
 __all__ = ["DynamoDBClient"]
