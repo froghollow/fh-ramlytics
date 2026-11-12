@@ -245,3 +245,10 @@ terraform/.terraform
 /json
 /downloads
 /ingest
+
+/EtradePythonClient
+/junk
+/src/data
+*code-workspace
+
+sandbox

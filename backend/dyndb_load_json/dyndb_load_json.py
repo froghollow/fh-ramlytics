@@ -62,8 +62,8 @@ def lambda_handler(event, context):
     try:
         parsed_content = json.loads(content)
         print(f"Parsed JSON content of {s3_key}:")
-        print(parsed_content)
         parsed_content["updated_at"] = timestamp
+        print(parsed_content)
     except json.JSONDecodeError:
         print(f"Failed to parse JSON content of {s3_key}")
 
@@ -81,7 +81,7 @@ def lambda_handler(event, context):
         instrument.pop("symbol")
         db.put_instrument(symbol, **instrument)
         
-    elif "account_data" in s3_ingest_folder:  # ToDo: deploy/test Sep 20 mods)
+    elif "account_data" in s3_ingest_folder:  
         clerk_user_id = parsed_content.get("clerk_user_id")
         account_id = parsed_content.get("account_id")
         account = db.get_account(clerk_user_id, account_id)
@@ -99,6 +99,20 @@ def lambda_handler(event, context):
         account.pop("account_id")
         db.put_account(clerk_user_id, account_id, **account)
 
+        # update 'quantity' in account positions for each account holding
+        # ToDo: repackage & deploy hotfix via Terraform
+        acct_holdings = parsed_content.get("holdings", {})
+        for symbol in acct_holdings.keys():
+            print(f"Processing symbol: {symbol}")
+            position = db.get_position(account_id, symbol)
+            if position:
+                position.pop("account_id")
+                position.pop("symbol")
+                position.pop("clerk_user_id")
+                position.pop("quantity")
+
+            position["holding"] = acct_holdings[symbol]
+            db.put_position(clerk_user_id=clerk_user_id, account_id=account_id, symbol=symbol, quantity=acct_holdings[symbol].get("Quantity"), **position)
 
     # move the processed file to a "./yyyy-mm-dd" folder in the s3 bucket
     move_processed_file(s3_bucket_name, s3_key, s3_ingest_folder)

@@ -8,16 +8,25 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
+    "agents>=1.4.0",
     "dotenv>=0.9.9",
+    "edgartools[ai]>=5.61.1",
+    "fonttools>=4.68.0",
+    "mineru-open-sdk>=0.2.5",
+    "openai-agents[litellm]>=0.23.1",
     "openpyxl>=3.1.5",
     "pypdf>=6.19.0",
     "ramlytics-database",
+    "rauth>=0.7.3",
+    "requests-oauthlib>=2.0.0",
 ]
 
 [project.scripts]
 ramlytics = "ramlytics:main"
 
 [tool.uv.workspace]
+
+
 members = [
     "backend/database",
     "backend/dyndb_load_json",
